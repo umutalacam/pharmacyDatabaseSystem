@@ -1,10 +1,10 @@
-package Util;
+package Database;
 
 import com.mysql.jdbc.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DBUtil {
+public class Connector {
 
     // JDBC driver name and database URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
