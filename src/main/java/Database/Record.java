@@ -1,7 +1,6 @@
 package Database;
 
 import Unit.Drug;
-import Unit.Inventory;
 import Unit.Patient;
 import Unit.Pharmacy;
 import com.mysql.jdbc.Connection;
@@ -33,7 +32,7 @@ public class Record {
         return false;
     }
 
-    public static boolean addDrugToInventory(Drug drug, Inventory inventory){
+    public static boolean addDrugToInventory(Drug drug, int inventory_id){
         return false;
     }
 
