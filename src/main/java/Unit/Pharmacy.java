@@ -4,10 +4,17 @@ public class Pharmacy {
     private int phar_id;
     private String name;
     private String adress;
-    private int telephone;
+    private String telephone;
 
-    public Pharmacy(int phar_id, String name, String adress, int telephone){
+    public Pharmacy(int phar_id, String name, String adress, String telephone){
         this.phar_id = phar_id;
+        this.name = name;
+        this.adress = adress;
+        this.telephone = telephone;
+    }
+
+    public Pharmacy(String name, String adress, String telephone) {
+        this.phar_id = 0;
         this.name = name;
         this.adress = adress;
         this.telephone = telephone;
@@ -25,7 +32,7 @@ public class Pharmacy {
         return adress;
     }
 
-    public int getTelephone() {
+    public String getTelephone() {
         return telephone;
     }
 }
