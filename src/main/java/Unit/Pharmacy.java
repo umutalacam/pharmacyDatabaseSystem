@@ -1,6 +1,6 @@
 package Unit;
 
-public class Pharmacy {
+public class Pharmacy implements User{
     private int phar_id;
     private String name;
     private String adress;

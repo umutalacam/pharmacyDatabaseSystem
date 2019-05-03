@@ -19,7 +19,7 @@
             <Image url="@../pharlogo.png" />
          </image>
       </ImageView>
-      <Label layoutX="121.0" layoutY="33.0" prefHeight="46.0" prefWidth="327.0" text="G24 ">
+      <Label layoutX="121.0" layoutY="33.0" prefHeight="46.0" prefWidth="327.0" text="G24 " textFill="#285985">
          <font>
             <Font name="Droid Sans" size="39.0" />
          </font>
@@ -29,7 +29,7 @@
             <Font size="23.0" />
          </font>
       </Label>
-      <GridPane layoutX="21.0" layoutY="143.0" prefHeight="70.0" prefWidth="395.0">
+      <GridPane layoutX="21.0" layoutY="143.0" prefHeight="60.0" prefWidth="406.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -39,12 +39,13 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TextField GridPane.columnIndex="1" />
-            <PasswordField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="Pharmacy ID:" />
+            <TextField fx:id="usernameField" GridPane.columnIndex="1" />
+            <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Username" />
             <Label text="Password" GridPane.rowIndex="1" />
          </children>
       </GridPane>
-      <Button layoutX="356.0" layoutY="220.0" mnemonicParsing="false" text="Log In" />
+      <Button layoutX="369.0" layoutY="219.0" mnemonicParsing="false" text="Log In" onAction="#loginAction" />
+      <Button layoutX="303.0" layoutY="219.0" mnemonicParsing="false" text="Reset" onAction="#resetAction"/>
    </children>
 </AnchorPane>

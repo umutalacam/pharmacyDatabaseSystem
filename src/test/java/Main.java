@@ -8,7 +8,9 @@ public class Main {
 
 
     public static void main(String[] args) {
-        Pharmacy pharmacy = new Pharmacy(2,"Bahar Eczanesi","Havlucu Sk, ğüşiçö Sk. No:1978", "+905070837523");
-        Record.updatePharmacy(pharmacy);
+        Pharmacy pharmacy = new Pharmacy("g24 Eczanesi","Bir yerlerde", "+905007565656");
+        Record.addNewInventory(3,"G24 Deposu");
     }
+
+
 }
