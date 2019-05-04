@@ -127,6 +127,8 @@ public class Record {
 
         Connection conn = Database.Connector.connect();
 
+        if (conn == null) return false;
+
         try{
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, name);
@@ -142,8 +144,54 @@ public class Record {
 
     }
 
-    public static boolean makeTransaction(Pharmacy pharmacy, Patient patient, Drug drug){
+
+    /**
+     * Deletes pharmacy from database
+     * **/
+    public static boolean deletePharmacy(int phar_id){
+        //Prepare query
+        String sql = "DELETE FROM Pharmacy WHERE phar_id = ?";
+        //Connect to the database
+        Connection conn = Database.Connector.connect();
+        //Check if connection is not null
+        if (conn == null) return false;
+        //Try to prepare statement
+        try{
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, phar_id);
+            //Execute query
+            return stmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return false;
     }
+
+
+    /**
+     * Record a new transaction to the database
+     * **/
+    public static boolean addTransaction(int phar_id, int patient_id, int drug_id){
+        //Prepare sql query
+        String sql = "INSERT INTO Transaction (buyer_id, seller_id, drug_id) VALUES (?, ?, ?)";
+        //Connect to the database
+        Connection conn = Database.Connector.connect();
+        //Check if connection is not null
+        if (conn == null) return false;
+
+        try{
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, patient_id);
+            stmt.setInt(2, phar_id);
+            stmt.setInt(3, drug_id);
+            //excute query
+            return stmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 
 }

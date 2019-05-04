@@ -43,7 +43,6 @@ public class Login extends Application{
         String usernameInput = usernameField.getText();
         String passwordInput = passwordField.getText();
         Database.Login.login(usernameInput, passwordInput);
-        System.out.println("Giriş yapmaya çalışıyoruz "+ usernameInput + passwordInput );
     }
 
     public void resetAction(){

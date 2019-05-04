@@ -29,7 +29,7 @@ public class Login {
             if (resultSet.next()){
                 currentUser = new Pharmacy(resultSet.getInt(1), resultSet.getString(2),
                         resultSet.getString(3), resultSet.getString(4));
-                System.out.printf("Login successfull, \n Pharmacy id: %d\nPharmacy name: %s\nPharmacy adress: %s\nPharmacy telephone: %s",
+                System.out.printf("Login successfull, \nPharmacy id: %d\nPharmacy name: %s\nPharmacy adress: %s\nPharmacy telephone: %s\n",
                         ((Pharmacy) currentUser).getPhar_id(), ((Pharmacy) currentUser).getName(), ((Pharmacy) currentUser).getAdress(),((Pharmacy) currentUser).getTelephone());
                 return true;
             }else {
