@@ -1,0 +1,14 @@
+Record.java
+
+addNewInventory(Inventory inventory)
+updateInventory(Inventory inventory)
+deleteInventory(int inventoryId)
+
+addNewPharmacy(Pharmacy pharmacy)
+updatePharmacy(Pharmacy pharmacy)
+deletePharmacy(int pharmacyId)
+
+makeTransaction(int phar_id, int patient_id, int drug_id)
+
+
+

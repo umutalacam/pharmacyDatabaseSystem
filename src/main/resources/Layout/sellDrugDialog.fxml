@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="561.0" prefWidth="487.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.SellDrugDialog">
+   <children>
+      <GridPane layoutX="56.0" layoutY="141.0" prefHeight="184.0" prefWidth="358.0" AnchorPane.topAnchor="141.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="31.0" minHeight="28.0" prefHeight="28.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="25.0" minHeight="22.0" prefHeight="25.0" />
+        </rowConstraints>
+         <children>
+            <Label text="Drug Name :" />
+            <Label text="Dose :" GridPane.rowIndex="1" />
+            <Label text="Minimum Age :" GridPane.rowIndex="2" />
+            <Label text="Prescribe Level :" GridPane.rowIndex="3" />
+            <Label text="Manufacturer :" GridPane.rowIndex="4" />
+            <Label text="Warnings :" GridPane.rowIndex="5" />
+            <Label fx:id="drugNameLabel" text="Label" GridPane.columnIndex="1" />
+            <Label fx:id="doseLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="minAgeLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="prescribeLevelLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label fx:id="manufacturerLabel" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            
+         </children>
+      </GridPane>
+      <ImageView fitHeight="89.0" fitWidth="90.0" layoutX="32.0" layoutY="44.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../sell_icon.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="128.0" layoutY="69.0" text="Sell Drug">
+         <font>
+            <Font size="33.0" />
+         </font>
+      </Label>
+      <ListView fx:id="warningsListView" layoutX="53.0" layoutY="335.0" prefHeight="68.0" prefWidth="385.0" />
+      <GridPane layoutX="53.0" layoutY="416.0" prefHeight="68.0" prefWidth="385.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Quantity">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font></Label>
+            <Label text="Cost" GridPane.rowIndex="1" />
+            <Spinner fx:id="quantitySpinner" GridPane.columnIndex="1" />
+            <Label fx:id="costLabel" prefHeight="16.0" prefWidth="63.0" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+      <Button fx:id="sellButton" layoutX="53.0" layoutY="498.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="385.0" text="Sell">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

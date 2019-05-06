@@ -1,9 +1,11 @@
 package Database;
 
 import Unit.Inventory;
+import Unit.Patient;
 import Unit.Pharmacy;
 import com.mysql.jdbc.Connection;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -173,6 +175,96 @@ public class Record {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    /**
+     * Add patient to the database
+     */
+    public static boolean addPatient(Patient patient){
+        //Prepare data fields
+        String firstname = patient.getFirst_name();
+        String lastname = patient.getLast_name();
+        String telephone = patient.getTelephone();
+        char sex = patient.getSex();
+        Date dateofbirth = patient.getDateOfBirth();
+
+        String sql = "INSERT INTO Patient (first_name, lastname, telephone, sex, date_of_birth) " +
+                "VALUES(?, ?, ?, ?, ?)";
+        //Connect to the database
+        Connection conn = Database.Connector.connect();
+        if (conn == null) return false;
+
+        try{
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, firstname);
+            stmt.setString(2, lastname);
+            stmt.setString(3, telephone);
+            stmt.setString(4, String.valueOf(sex));
+            stmt.setDate(5,dateofbirth);
+            return stmt.execute();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
+
+    /**
+     * Update patient with given id.
+     * **/
+    public static boolean updatePatient(Patient patient){
+        //Prepare data fields
+        String firstname = patient.getFirst_name();
+        String lastname = patient.getLast_name();
+        String telephone = patient.getTelephone();
+        char sex = patient.getSex();
+        Date dateofbirth = patient.getDateOfBirth();
+        int patient_id = patient.getPatient_id();
+
+        String sql = "UPDATE Patient SET first_name = ?, lastname = ?, telephone = ?, sex = ?, date_of_birth = ? " +
+                "WHERE patient_id = ?";
+        //Connect to the database
+        Connection conn = Database.Connector.connect();
+        if (conn == null) return false;
+
+        try{
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, firstname);
+            stmt.setString(2, lastname);
+            stmt.setString(3, telephone);
+            stmt.setString(4, String.valueOf(sex));
+            stmt.setDate(5,dateofbirth);
+            stmt.setInt(6,patient_id);
+            return stmt.execute();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     *  Deletes a patient with the given Id.
+     */
+    public static boolean deletePatient(int patient_id){
+        String sql = "DELETE FROM Patient WHERE patient_id = ?";
+
+        //Connect to the database
+        Connection conn = Database.Connector.connect();
+        if (conn == null) return false;
+
+        try{
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1,patient_id);
+            return stmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         return false;
     }
 }

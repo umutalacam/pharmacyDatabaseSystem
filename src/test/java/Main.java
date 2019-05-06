@@ -1,5 +1,6 @@
 import Database.Record;
 import Unit.Inventory;
+import Unit.Patient;
 import Unit.Pharmacy;
 
 import java.sql.Connection;

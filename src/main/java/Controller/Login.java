@@ -46,6 +46,8 @@ public class Login extends Application{
     }
 
     public void resetAction(){
+       this.passwordField.setText("");
+       this.usernameField.setText("");
 
     }
 }
