@@ -23,9 +23,9 @@
                     <children>
                         <ToolBar prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <items>
-                                <Button fx:id="inventoriesAddButton" mnemonicParsing="false" text="Add" />
-                                <Button fx:id="inventoriesDeleteButton" mnemonicParsing="false" text="Delete" />
-                              <Button fx:id="inventoriesEditButton" mnemonicParsing="false" text="Edit" />
+                                <Button fx:id="inventoriesAddButton" mnemonicParsing="false" onAction="#inventoryAddAction" text="Add" />
+                                <Button fx:id="inventoriesDeleteButton" mnemonicParsing="false" text="Delete" onAction="#inventoryDeleteAction"/>
+                              <Button fx:id="inventoriesEditButton" mnemonicParsing="false" text="Edit" onAction="#inventoryEditAction" />
                             </items>
                         </ToolBar>
                         <SplitPane dividerPositions="0.36403508771929827" layoutX="74.0" layoutY="39.0" orientation="VERTICAL" prefHeight="260.0" prefWidth="673.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="39.0">
@@ -35,7 +35,7 @@
                                     <TableView fx:id="inventoriesTableView" layoutX="25.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                       <columns>
                                         <TableColumn fx:id="inventoriesNameColumn" prefWidth="405.0" text="Inventory Name" />
-                                        <TableColumn fx:id="inventoriesDurgsInStockColumn" prefWidth="131.0" text="Drugs In Stock" />
+                                        <TableColumn fx:id="inventoriesDrugsInStockColumn" prefWidth="131.0" text="Drugs In Stock" />
                                       </columns>
                                     </TableView>
                                  </children>

@@ -12,9 +12,9 @@ public class Connector {
     private static final String USER = "pharmacydb";
     private static final String PASS = "12345";
 
-
+    private static Connection conn;
     public static Connection connect(){
-        Connection conn = null;
+
         try {
             //STEP 2: Register JDBC driver
             Class.forName("com.mysql.jdbc.Driver");
@@ -31,6 +31,14 @@ public class Connector {
             //Handle errors for Class.forName
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public static void disconnect(){
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

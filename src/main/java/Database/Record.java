@@ -1,5 +1,6 @@
 package Database;
 
+import Unit.Drug;
 import Unit.Inventory;
 import Unit.Patient;
 import Unit.Pharmacy;
@@ -8,6 +9,7 @@ import com.mysql.jdbc.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Record {
 
@@ -30,7 +32,12 @@ public class Record {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, phar_id);
             stmt.setString(2, inventoryName);
-            return stmt.execute();
+            stmt.execute();
+            if (stmt.getUpdateCount()!=-1) {
+                conn.close();
+                return true;
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -47,9 +54,9 @@ public class Record {
         String inventoryName = inventory.getInventoryName();
 
         //Prepare sql query
-        String sql = "UPDATE Inventories" +
-                "SET phar_id = ?, inv_name = ?" +
-                "WHERE inv_id = ?";
+        String sql = "UPDATE Inventory " +
+                "SET phar_id=?, inv_name=? " +
+                "WHERE inv_id=?";
 
         //Connect to the database
         Connection conn = Database.Connector.connect();
@@ -60,7 +67,11 @@ public class Record {
             stmt.setInt(1, pharmacyId);
             stmt.setString(2, inventoryName);
             stmt.setInt(3, inventoryId);
-            return stmt.execute();
+            stmt.execute();
+            if (stmt.getUpdateCount()!=-1){
+                conn.close();
+                return true;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -81,7 +92,11 @@ public class Record {
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, inv_id);
-            return stmt.execute();
+            stmt.execute();
+            if (stmt.getUpdateCount()!=-1){
+                conn.close();
+                return true;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -267,4 +282,5 @@ public class Record {
 
         return false;
     }
+
 }

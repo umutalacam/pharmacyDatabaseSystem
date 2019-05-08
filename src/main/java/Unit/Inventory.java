@@ -1,6 +1,8 @@
 package Unit;
 
 import com.mysql.jdbc.Connection;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -10,19 +12,58 @@ import java.sql.SQLException;
 public class Inventory {
     private int inventoryId;
     private int pharmacyId;
-    private String inventoryName;
+    private SimpleStringProperty inventoryName;
+    private SimpleIntegerProperty drugsInStock;
+
+
+    public Inventory(int inventoryId, int pharmacyId, String inventoryName, int drugsInStock){
+        this.inventoryId = inventoryId;
+        this.pharmacyId = pharmacyId;
+        this.inventoryName =  new SimpleStringProperty(inventoryName);
+        this.drugsInStock = new SimpleIntegerProperty(drugsInStock);
+    }
 
     public Inventory(int inventoryId, int pharmacyId, String inventoryName) {
         this.inventoryId = inventoryId;
         this.pharmacyId = pharmacyId;
-        this.inventoryName = inventoryName;
+        this.inventoryName = new SimpleStringProperty(inventoryName);
+        this.drugsInStock = new SimpleIntegerProperty(this.getDrugsInStock());
     }
 
     public Inventory(int pharmacyId, String inventoryName) {
         //Constructor to instance an Inventory without Id for adding purpose.
         this.inventoryId = 0;
         this.pharmacyId = pharmacyId;
-        this.inventoryName = inventoryName;
+        this.inventoryName = new SimpleStringProperty(inventoryName);
+        this.drugsInStock = new SimpleIntegerProperty(this.getDrugsInStock());
+    }
+
+
+    /**
+     * Calculates and returns the drug count in Inventory
+     */
+    public int getDrugsInStock(){
+
+        int sumOfDrugs = 0;
+        String sql = "SELECT COUNT(inv_id) FROM InventoryContains WHERE inv_id = ?";
+        //Connect to the database
+        Connection conn = Database.Connector.connect();
+        if (conn == null) return 0;
+
+        try{
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, this.inventoryId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                sumOfDrugs = rs.getInt(1);
+            }
+            conn.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return sumOfDrugs;
     }
 
     public boolean addDrug(int drug_id, int quantity, Date expiryDate){
@@ -68,8 +109,10 @@ public class Inventory {
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()){
+                conn.close();
                 return new Inventory(rs.getInt(1),rs.getInt(2),rs.getString(3));
             }else {
+                conn.close();
                 System.err.println("getInventoryById(): Couldn't find Inventory in the database");
                 return null;
             }
@@ -89,6 +132,8 @@ public class Inventory {
     }
 
     public String getInventoryName() {
-        return inventoryName;
+
+        return inventoryName.get();
     }
+
 }

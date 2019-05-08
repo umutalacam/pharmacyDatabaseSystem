@@ -7,9 +7,11 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -42,7 +44,23 @@ public class Login extends Application{
     public void loginAction(){
         String usernameInput = usernameField.getText();
         String passwordInput = passwordField.getText();
-        Database.Login.login(usernameInput, passwordInput);
+        Stage prev = (Stage) usernameField.getScene().getWindow();
+
+        if (Database.Login.login(usernameInput, passwordInput)){
+            Pane newPane = null;
+            try {
+                newPane = FXMLLoader.load(getClass().getResource("/Layout/pharmacyPanel.fxml"));
+                Scene scene = new Scene(newPane);
+                Stage newStage = new Stage();
+                newStage.setScene(scene);
+                newStage.setTitle("Pharmacy Panel");
+                newStage.show();
+                prev.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     public void resetAction(){

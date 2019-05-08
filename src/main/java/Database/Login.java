@@ -18,7 +18,7 @@ public class Login {
         Connection conn = Database.Connector.connect();
 
         //Prepare query
-        String sql = "SELECT * FROM Users WHERE username = ? AND password = ?";
+        String sql = "SELECT * FROM Pharmacy WHERE phar_id = (SELECT phar_id FROM Users WHERE username = ? AND password = ?)";
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);
