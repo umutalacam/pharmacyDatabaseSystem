@@ -51,6 +51,10 @@ public class Login {
 
     }
 
+    public static Pharmacy getCurrentPharmacy(){
+        return (Pharmacy) currentUser;
+    }
+
 
 
 }

@@ -66,10 +66,10 @@ public class Inventory {
         return sumOfDrugs;
     }
 
-    public boolean addDrug(int drug_id, int quantity, Date expiryDate){
+    public boolean addDrug(int drug_id, int quantity, double price, Date expiryDate){
 
         //Prepare sql query and db connection
-        String sql = "INSERT INTO InventoryContains (inv_id, drug_id, quantity, expiry_date) VALUES(?, ?, ?, ?)";
+        String sql = "INSERT INTO InventoryContains (inv_id, drug_id, quantity, price, expiry_date) VALUES(?, ?, ?, ?, ?)";
         Connection conn = Database.Connector.connect();
         if (conn == null) return false;
 
@@ -79,9 +79,14 @@ public class Inventory {
             stmt.setInt(1, this.inventoryId);
             stmt.setInt(2, drug_id);
             stmt.setInt(3, quantity);
-            stmt.setDate(4, expiryDate);
+            stmt.setDouble(4, price);
+            stmt.setDate(5, expiryDate);
+            stmt.execute();
             //Execute query
-            return stmt.execute();
+            if (stmt.getUpdateCount()!=-1) {
+                conn.close();
+                return true;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -136,4 +141,9 @@ public class Inventory {
         return inventoryName.get();
     }
 
+
+    @Override
+    public String toString() {
+        return  inventoryName.get();
+    }
 }

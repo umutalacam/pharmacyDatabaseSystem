@@ -1,12 +1,15 @@
 package Controller;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -17,7 +20,7 @@ import java.util.ResourceBundle;
 
 
 
-public class Login extends Application{
+public class Login extends Application implements Initializable{
 
     @FXML
     private TextField usernameField;
@@ -39,6 +42,8 @@ public class Login extends Application{
 
         stage.setResizable(false);
         stage.show();
+
+
     }
 
     public void loginAction(){
@@ -47,7 +52,7 @@ public class Login extends Application{
         Stage prev = (Stage) usernameField.getScene().getWindow();
 
         if (Database.Login.login(usernameInput, passwordInput)){
-            Pane newPane = null;
+            Pane newPane;
             try {
                 newPane = FXMLLoader.load(getClass().getResource("/Layout/pharmacyPanel.fxml"));
                 Scene scene = new Scene(newPane);
@@ -63,9 +68,26 @@ public class Login extends Application{
         }
     }
 
+
     public void resetAction(){
        this.passwordField.setText("");
        this.usernameField.setText("");
+
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        passwordField.setOnKeyPressed(new EventHandler<KeyEvent>()
+        {
+            @Override
+            public void handle(KeyEvent ke)
+            {
+                if (ke.getCode().equals(KeyCode.ENTER))
+                {
+                    loginAction();
+                }
+            }
+        });
 
     }
 }

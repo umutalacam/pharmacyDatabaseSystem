@@ -74,4 +74,9 @@ public class InventoryContent {
     public SimpleDoubleProperty priceProperty() {
         return price;
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }
