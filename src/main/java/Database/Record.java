@@ -201,7 +201,7 @@ public class Record {
         String firstname = patient.getFirst_name();
         String lastname = patient.getLast_name();
         String telephone = patient.getTelephone();
-        char sex = patient.getSex();
+        char sex = patient.getSex().charAt(0);
         Date dateofbirth = patient.getDateOfBirth();
 
         String sql = "INSERT INTO Patient (first_name, lastname, telephone, sex, date_of_birth) " +
@@ -235,7 +235,7 @@ public class Record {
         String firstname = patient.getFirst_name();
         String lastname = patient.getLast_name();
         String telephone = patient.getTelephone();
-        char sex = patient.getSex();
+        char sex = patient.getSex().charAt(0);
         Date dateofbirth = patient.getDateOfBirth();
         int patient_id = patient.getPatient_id();
 

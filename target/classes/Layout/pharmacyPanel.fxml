@@ -79,11 +79,13 @@
                         </ToolBar>
                         <TableView fx:id="drugsTableView" layoutY="40.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
                           <columns>
+                            <TableColumn fx:id="drugsInventoryColumn" prefWidth="179.0" text="Inventory" />
                             <TableColumn fx:id="drugsNameColumn" prefWidth="179.0" text="Name" />
                             <TableColumn fx:id="drugsDoseColumn" prefWidth="82.0" text="Dose" />
                               <TableColumn fx:id="drugsPrescribeColumn" prefWidth="147.0" text="Prescribe" />
                               <TableColumn fx:id="drugsMinAgeColumn" prefWidth="147.0" text="Minimum Age" />
                             <TableColumn fx:id="drugsManufacturerColumn" prefWidth="159.0" text="Manufacturer" />
+                            <TableColumn fx:id="drugsQuantityColumn" prefWidth="159.0" text="Quantity" />
                             <TableColumn fx:id="drugsPriceColumn" prefWidth="135.0" text="Price" />
                           </columns>
                         </TableView>
@@ -103,34 +105,34 @@
                                     <Font size="33.0" />
                                 </font>
                             </Label>
-                            <ListView fx:id="warningsListView" layoutX="15.0" layoutY="114.0" prefHeight="98.0" prefWidth="306.0" />
-                            <GridPane layoutX="15.0" layoutY="239.0" prefHeight="68.0" prefWidth="323.0">
+                            <ListView fx:id="warningsListView" layoutX="15.0" layoutY="189.0" prefHeight="98.0" prefWidth="320.0" />
+                            <GridPane layoutX="15.0" layoutY="299.0" prefHeight="68.0" prefWidth="323.0">
                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="156.0" minWidth="10.0" prefWidth="84.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="239.0" minWidth="10.0" prefWidth="239.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                 <children>
-                                    <Label text="Quantity">
+                                    <Label text="Quantity:">
                                         <font>
                                             <Font name="System Bold" size="13.0" />
                                         </font></Label>
-                                    <Spinner fx:id="quantitySpinner" GridPane.columnIndex="1" />
-                                    <Label fx:id="costLabel" prefHeight="16.0" prefWidth="63.0" text="Label" textFill="#fc0303" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <Spinner fx:id="quantitySpinner" editable="true" prefHeight="26.0" prefWidth="118.0" GridPane.columnIndex="1" />
+                                    <Label fx:id="costLabel" prefHeight="26.0" prefWidth="154.0" text="\$0" textFill="#fc0303" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                     <font>
-                                       <Font size="16.0" />
+                                       <Font size="21.0" />
                                     </font></Label>
-                                 <Label text="Cost" GridPane.rowIndex="1">
+                                 <Label text="Cost:" GridPane.rowIndex="1">
                                     <font>
                                        <Font name="System Bold" size="13.0" />
                                     </font>
                                  </Label>
                                 </children>
                             </GridPane>
-                            <Button fx:id="sellButton" layoutX="14.0" layoutY="320.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="324.0" text="Sell">
+                            <Button fx:id="sellButton" layoutX="15.0" layoutY="413.0" mnemonicParsing="false" onAction="#sellButtonAction" prefHeight="39.0" prefWidth="324.0" text="Sell">
                                 <font>
                                     <Font size="20.0" />
                                 </font>
@@ -140,11 +142,35 @@
                                  <Image url="@../sell_icon.png" />
                               </image>
                            </ImageView>
-                           <Label layoutX="15.0" layoutY="93.0" text="Warnings">
+                           <Label layoutX="15.0" layoutY="164.0" text="Warnings:">
                               <font>
                                  <Font name="System Bold" size="13.0" />
                               </font>
                            </Label>
+                           <GridPane layoutX="15.0" layoutY="97.0" prefHeight="60.0" prefWidth="317.0">
+                             <columnConstraints>
+                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="85.0" />
+                               <ColumnConstraints hgrow="SOMETIMES" maxWidth="234.0" minWidth="10.0" prefWidth="232.0" />
+                             </columnConstraints>
+                             <rowConstraints>
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                             </rowConstraints>
+                              <children>
+                                 <Label text="Drug:">
+                                    <font>
+                                       <Font name="System Bold" size="13.0" />
+                                    </font>
+                                 </Label>
+                                 <Label text="To:" GridPane.rowIndex="1">
+                                    <font>
+                                       <Font name="System Bold" size="13.0" />
+                                    </font>
+                                 </Label>
+                                 <Label fx:id="sellSelectedDrugNameLabel" text="-" GridPane.columnIndex="1" />
+                                 <Label fx:id="sellSelectedPatientNameLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                              </children>
+                           </GridPane>
                         </children>
                     </AnchorPane>
                      <SplitPane dividerPositions="0.5" layoutX="14.0" layoutY="14.0" orientation="VERTICAL" prefHeight="497.0" prefWidth="617.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="353.0" AnchorPane.topAnchor="0.0">
@@ -153,14 +179,18 @@
                               <children>
                                  <ToolBar layoutY="-6.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                    <items>
-                                       <TextField prefHeight="26.0" promptText="Patient Name" />
-                                     <Button mnemonicParsing="false" text="Search" />
+                                       <TextField fx:id="patientSearchField" prefHeight="26.0" promptText="Patient Name" />
+                                     <Button fx:id="patientSearchButton" mnemonicParsing="false" onAction="#searchPatientAction" text="Search" />
                                    </items>
                                  </ToolBar>
-                                 <TableView layoutX="54.0" layoutY="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                                 <TableView fx:id="sellDrugPatientsTableView" layoutX="54.0" layoutY="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
                                    <columns>
-                                     <TableColumn prefWidth="75.0" text="C1" />
-                                     <TableColumn prefWidth="75.0" text="C2" />
+                                     <TableColumn fx:id="patientsFirstNameColumn" prefWidth="150.0" text="First Name" />
+                                     <TableColumn fx:id="patientsLastNameColumn" prefWidth="150.0" text="Last Name" />
+                                     <TableColumn fx:id="patientsSexColumn" minWidth="0.0" prefWidth="64.0" text="Sex" />
+                                       <TableColumn fx:id="patientsAgeColumn" prefWidth="66.0" text="Age" />
+                                       <TableColumn fx:id="patientsTelephoneColumn" prefWidth="160.0" text="Telephone" />
+
                                    </columns>
                                  </TableView>
                               </children></AnchorPane>
@@ -168,17 +198,24 @@
                               <children>
                                  <ToolBar layoutX="28.0" layoutY="14.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                    <items>
-                                       <TextField promptText="Drug Name" />
-                                     <Button mnemonicParsing="false" text="Search" />
+                                       <TextField fx:id="drugSearchField" promptText="Drug Name" />
+                                     <Button fx:id="drugSearchButton" mnemonicParsing="false" onAction="#searchDrugAction" text="Search" />
                                    </items>
                                  </ToolBar>
-                                 <TableView layoutX="188.0" layoutY="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                                 <TableView fx:id="sellDrugDrugsTableView" layoutX="188.0" layoutY="40.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
                                    <columns>
-                                     <TableColumn prefWidth="75.0" text="C1" />
-                                     <TableColumn prefWidth="75.0" text="C2" />
-                                   </columns>
+                                       <TableColumn fx:id="sellDrugInventoryColumn" prefWidth="82.00001525878906" text="Inventory" />
+                                       <TableColumn fx:id="sellDrugNameColumn" prefWidth="146.0" text="Name" />
+                                       <TableColumn fx:id="sellDrugDoseColumn" prefWidth="51.0" text="Dose" />
+                                       <TableColumn fx:id="sellDrugPrescribeColumn" prefWidth="76.0" text="Prescribe" />
+                                       <TableColumn fx:id="sellDrugMinAgeColumn" prefWidth="117.0" text="Minimum Age" />
+                                       <TableColumn fx:id="sellDrugManufacturerColumn" prefWidth="112.0" text="Manufacturer" />
+                                       <TableColumn fx:id="sellDrugQuantityColumn" prefWidth="100.0" text="Quantity" />
+                                       <TableColumn fx:id="sellDrugPriceColumn" prefWidth="100.0" text="Price" />
+                                    </columns>
                                  </TableView>
-                              </children></AnchorPane>
+                              </children>
+                         </AnchorPane>
                        </items>
                      </SplitPane>
 

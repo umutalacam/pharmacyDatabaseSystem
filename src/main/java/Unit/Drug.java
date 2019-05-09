@@ -9,22 +9,27 @@ public class Drug {
     private int substanceId;
     private int manId;
     private int inventoryId;
+    private SimpleStringProperty inventoryName;
     private SimpleStringProperty name;
     private SimpleIntegerProperty dose;
-    private SimpleIntegerProperty minAge;
     private SimpleIntegerProperty prescribeLevel;
-    private SimpleStringProperty substance;
+    private SimpleIntegerProperty minAge;
     private SimpleStringProperty manufacturer;
+    private SimpleStringProperty substance;
+    private SimpleIntegerProperty quantity;
     private SimpleDoubleProperty price;
 
-    public Drug(int inventoryId, int drugId, String name, int dose, int prescribeLevel, int minAge, String manufacturer, Double price){
+    public Drug(int inventoryId, String inventoryName, int drugId, String name, int dose, int prescribeLevel,
+                int minAge, String manufacturer, int quantity, Double price){
         this.inventoryId = inventoryId;
         this.drugId = drugId;
+        this.inventoryName = new SimpleStringProperty(inventoryName);
         this.name = new SimpleStringProperty(name);
         this.dose = new SimpleIntegerProperty(dose);
         this.minAge = new SimpleIntegerProperty(minAge);
         this.prescribeLevel = new SimpleIntegerProperty(prescribeLevel);
         this.manufacturer = new SimpleStringProperty(manufacturer);
+        this.quantity = new SimpleIntegerProperty(quantity);
         this.price = new SimpleDoubleProperty(price);
     }
 
@@ -57,30 +62,6 @@ public class Drug {
         return drugId;
     }
 
-    public String getName() {
-        return name.get();
-    }
-
-    public int getDose() {
-        return dose.get();
-    }
-
-    public int getMinAge() {
-        return minAge.get();
-    }
-
-    public int getPrescribeLevel() {
-        return prescribeLevel.get();
-    }
-
-    public String getSubstance() {
-        return substance.get();
-    }
-
-    public String getManufacturer(){
-        return manufacturer.get();
-    }
-
     public int getSubstanceId() {
         return substanceId;
     }
@@ -89,15 +70,79 @@ public class Drug {
         return manId;
     }
 
+    public int getInventoryId() {
+        return inventoryId;
+    }
+
+    public String getInventoryName() {
+        return inventoryName.get();
+    }
+
+    public SimpleStringProperty inventoryNameProperty() {
+        return inventoryName;
+    }
+
+    public String getName() {
+        return name.get();
+    }
+
+    public SimpleStringProperty nameProperty() {
+        return name;
+    }
+
+    public int getDose() {
+        return dose.get();
+    }
+
+    public SimpleIntegerProperty doseProperty() {
+        return dose;
+    }
+
+    public int getPrescribeLevel() {
+        return prescribeLevel.get();
+    }
+
+    public SimpleIntegerProperty prescribeLevelProperty() {
+        return prescribeLevel;
+    }
+
+    public int getMinAge() {
+        return minAge.get();
+    }
+
+    public SimpleIntegerProperty minAgeProperty() {
+        return minAge;
+    }
+
+    public String getManufacturer() {
+        return manufacturer.get();
+    }
+
+    public SimpleStringProperty manufacturerProperty() {
+        return manufacturer;
+    }
+
+    public String getSubstance() {
+        return substance.get();
+    }
+
+    public SimpleStringProperty substanceProperty() {
+        return substance;
+    }
+
+    public int getQuantity() {
+        return quantity.get();
+    }
+
+    public SimpleIntegerProperty quantityProperty() {
+        return quantity;
+    }
+
     public double getPrice() {
         return price.get();
     }
 
     public SimpleDoubleProperty priceProperty() {
         return price;
-    }
-
-    public int getInventoryId() {
-        return inventoryId;
     }
 }

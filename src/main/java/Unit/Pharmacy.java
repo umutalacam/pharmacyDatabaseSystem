@@ -28,9 +28,9 @@ public class Pharmacy implements User{
         this.telephone = telephone;
     }
 
-    public boolean makeTransaction(int patient_id, int drug_id){
+    public boolean makeTransaction(int inv_id, int patient_id, int drug_id, int quantity){
         //Prepare sql query
-        String sql = "INSERT INTO Transaction (buyer_id, seller_id, drug_id) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Transaction (buyer_id, seller_id, drug_id, quantity) VALUES (?, ?, ?, ?)";
         //Connect to the database
         Connection conn = Database.Connector.connect();
         //Check if connection is not null
@@ -41,13 +41,44 @@ public class Pharmacy implements User{
             stmt.setInt(1, patient_id);
             stmt.setInt(2, this.phar_id);
             stmt.setInt(3, drug_id);
+            stmt.setInt(4, quantity);
             //excute query
-            return stmt.execute();
+            stmt.execute();
+            if (stmt.getUpdateCount()==-1) return false;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
 
-        return false;
+
+        //Remove sold drugs from inventory
+        String sqlUpdate = "UPDATE InventoryContains SET quantity = quantity - ? WHERE inv_id = ? AND drug_id = ?";
+        try {
+            PreparedStatement updateStmt = conn.prepareStatement(sqlUpdate);
+            updateStmt.setInt(1,quantity);
+            updateStmt.setInt(2,inv_id);
+            updateStmt.setInt(3,drug_id);
+            //execute query
+            updateStmt.execute();
+            if (updateStmt.getUpdateCount()==-1) return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        //Remove drugs with 0 quantity
+        String sqlDelete = "DELETE FROM InventoryContains WHERE quantity=0";
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sqlDelete);
+            stmt.execute();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+
+        return true;
     }
 
     public static Pharmacy getPharmacyWithId(int phar_id){
