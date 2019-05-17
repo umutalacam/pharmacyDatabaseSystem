@@ -29,10 +29,10 @@
           <TableColumn fx:id="drugSearchNameColumn" prefWidth="208.0" text="Name" />
           <TableColumn fx:id="drugSearchDoseColumn" prefWidth="68.0" text="Dose" />
           <TableColumn fx:id="drugSearchPrescribeColumn" prefWidth="93.0" text="Prescribe" />
-          <TableColumn fx:id="drugSearchManufacturerColumn" prefWidth="210.0" text="Manufacturer" />
+          <TableColumn fx:id="drugSearchManufacturerColumn" prefWidth="170.0" text="Manufacturer" />
         </columns>
       </TableView>
-      <Button fx:id="addDrugAddButton" layoutX="540.0" layoutY="502.0" mnemonicParsing="false" onAction="#addDrugAction" text="Add">
+      <Button fx:id="addDrugAddButton" defaultButton="true" layoutX="540.0" layoutY="502.0" mnemonicParsing="false" onAction="#addDrugAction" text="Add">
          <font>
             <Font size="14.0" />
          </font></Button>

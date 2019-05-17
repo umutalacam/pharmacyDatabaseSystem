@@ -9,10 +9,11 @@ public class Drug {
     private int substanceId;
     private int manId;
     private int inventoryId;
+    private int prescribe;
     private SimpleStringProperty inventoryName;
     private SimpleStringProperty name;
     private SimpleIntegerProperty dose;
-    private SimpleIntegerProperty prescribeLevel;
+    private SimpleStringProperty prescribeLevel;
     private SimpleIntegerProperty minAge;
     private SimpleStringProperty manufacturer;
     private SimpleStringProperty substance;
@@ -27,7 +28,7 @@ public class Drug {
         this.name = new SimpleStringProperty(name);
         this.dose = new SimpleIntegerProperty(dose);
         this.minAge = new SimpleIntegerProperty(minAge);
-        this.prescribeLevel = new SimpleIntegerProperty(prescribeLevel);
+        this.prescribeLevel = parsePrescribeLevel(prescribeLevel);
         this.manufacturer = new SimpleStringProperty(manufacturer);
         this.quantity = new SimpleIntegerProperty(quantity);
         this.price = new SimpleDoubleProperty(price);
@@ -38,7 +39,8 @@ public class Drug {
         this.name = new SimpleStringProperty(name);
         this.dose = new SimpleIntegerProperty(dose);
         this.minAge = new SimpleIntegerProperty(minAge);
-        this.prescribeLevel = new SimpleIntegerProperty(prescribeLevel);
+        this.prescribe = prescribeLevel;
+        this.prescribeLevel = parsePrescribeLevel(prescribeLevel);
         this.substanceId = substanceId;
         this.manId = manId;
         this.price = new SimpleDoubleProperty(0);
@@ -52,10 +54,22 @@ public class Drug {
         this.name = new SimpleStringProperty(name);
         this.dose = new SimpleIntegerProperty(dose);
         this.minAge = new SimpleIntegerProperty(minAge);
-        this.prescribeLevel = new SimpleIntegerProperty(prescribeLevel);
+        this.prescribeLevel = parsePrescribeLevel(prescribeLevel);
         this.substance = new SimpleStringProperty(substance);
         this.manufacturer = new SimpleStringProperty(manufacturer);
         this.price = new SimpleDoubleProperty(0);
+    }
+
+    private SimpleStringProperty parsePrescribeLevel(int prescribe){
+        if (prescribe == 0) {
+            return new SimpleStringProperty("Green");
+        }else if (prescribe == 1){
+            return new SimpleStringProperty("Normal");
+        }else if (prescribe > 1){
+            return new SimpleStringProperty("Red");
+        }else {
+            return new SimpleStringProperty("Not Defined");
+        }
     }
 
     public int getDrugId() {
@@ -99,10 +113,10 @@ public class Drug {
     }
 
     public int getPrescribeLevel() {
-        return prescribeLevel.get();
+        return this.prescribe;
     }
 
-    public SimpleIntegerProperty prescribeLevelProperty() {
+    public SimpleStringProperty prescribeLevelProperty() {
         return prescribeLevel;
     }
 

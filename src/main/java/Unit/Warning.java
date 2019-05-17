@@ -23,4 +23,9 @@ public class Warning {
     public SimpleStringProperty descriptionProperty() {
         return description;
     }
+
+    @Override
+    public String toString() {
+        return getDescription();
+    }
 }

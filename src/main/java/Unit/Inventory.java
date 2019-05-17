@@ -69,7 +69,8 @@ public class Inventory {
     public boolean addDrug(int drug_id, int quantity, double price, Date expiryDate){
 
         //Prepare sql query and db connection
-        String sql = "INSERT INTO InventoryContains (inv_id, drug_id, quantity, price, expiry_date) VALUES(?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO InventoryContains (inv_id, drug_id, quantity, price, expiry_date) VALUES(?, ?, ?, ?, ?)" +
+                "ON DUPLICATE KEY UPDATE quantity = quantity+VALUES(quantity)";
         Connection conn = Database.Connector.connect();
         if (conn == null) return false;
 

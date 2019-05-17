@@ -28,9 +28,9 @@ public class Pharmacy implements User{
         this.telephone = telephone;
     }
 
-    public boolean makeTransaction(int inv_id, int patient_id, int drug_id, int quantity){
+    public boolean makeTransaction(int inv_id, int patient_id, int drug_id, int quantity, double cost){
         //Prepare sql query
-        String sql = "INSERT INTO Transaction (buyer_id, seller_id, drug_id, quantity) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Transaction (buyer_id, seller_id, drug_id, quantity, cost) VALUES (?, ?, ?, ?, ?)";
         //Connect to the database
         Connection conn = Database.Connector.connect();
         //Check if connection is not null
@@ -42,6 +42,7 @@ public class Pharmacy implements User{
             stmt.setInt(2, this.phar_id);
             stmt.setInt(3, drug_id);
             stmt.setInt(4, quantity);
+            stmt.setDouble(5, cost);
             //excute query
             stmt.execute();
             if (stmt.getUpdateCount()==-1) return false;
@@ -123,5 +124,17 @@ public class Pharmacy implements User{
 
     public String getTelephone() {
         return telephone;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAdress(String adress) {
+        this.adress = adress;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 }

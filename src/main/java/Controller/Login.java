@@ -75,9 +75,20 @@ public class Login extends Application implements Initializable{
 
     }
 
+
+    public void addPharmacyAction() throws IOException {
+        Pane newPane;
+        newPane = FXMLLoader.load(getClass().getResource("/Layout/addPharmacyDialog.fxml"));
+        Scene scene = new Scene(newPane);
+        Stage newStage = new Stage();
+        newStage.setScene(scene);
+        newStage.setTitle("Add  new pharmacy");
+        newStage.showAndWait();
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        passwordField.setOnKeyPressed(new EventHandler<KeyEvent>()
+        /*passwordField.setOnKeyPressed(new EventHandler<KeyEvent>()
         {
             @Override
             public void handle(KeyEvent ke)
@@ -87,7 +98,7 @@ public class Login extends Application implements Initializable{
                     loginAction();
                 }
             }
-        });
+        });*/
 
     }
 }

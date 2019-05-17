@@ -21,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import javax.print.attribute.standard.JobStateReason;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
@@ -28,6 +29,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -61,7 +63,7 @@ public class PharmacyPanel extends Application implements Initializable {
     public TableView<Drug> drugsTableView;
     public TableColumn<Drug, String> drugsNameColumn;
     public TableColumn<Drug, Integer> drugsDoseColumn;
-    public TableColumn<Drug, Integer> drugsPrescribeColumn;
+    public TableColumn<Drug, String> drugsPrescribeColumn;
     public TableColumn<Drug, String> drugsManufacturerColumn;
     public TableColumn<Drug, Double> drugsPriceColumn;
     public TableColumn<Drug, Integer> drugsMinAgeColumn;
@@ -81,7 +83,7 @@ public class PharmacyPanel extends Application implements Initializable {
     public Button drugSearchButton;
     public TableView<Drug> sellDrugDrugsTableView;
     public TableColumn<Drug, String> sellDrugNameColumn;
-    public TableColumn<Drug, Integer> sellDrugPrescribeColumn;
+    public TableColumn<Drug, String> sellDrugPrescribeColumn;
     public TableColumn<Drug, Integer> sellDrugDoseColumn;
     public TableColumn<Drug, Integer> sellDrugMinAgeColumn;
     public TableColumn<Drug, String> sellDrugManufacturerColumn;
@@ -91,27 +93,34 @@ public class PharmacyPanel extends Application implements Initializable {
     public Button sellButton;
     public Spinner<Integer> quantitySpinner;
     public Label costLabel;
-    public ListView warningsListView;
     public Label sellSelectedDrugNameLabel;
     public Label sellSelectedPatientNameLabel;
+
+    public Button transactionDeleteButton;
+    public TableView<Transaction> transactionsTableView;
+    public TableColumn<Transaction, String> transactionsFirstNameColumn;
+    public TableColumn<Transaction, String> transactionLastNameColumn;
+    public TableColumn<Transaction, String> transactionDrugNameColumn;
+    public TableColumn<Transaction, Integer> transactionDoseColumn;
+    public TableColumn<Transaction, String> transactionManufacturerColumn;
+    public TableColumn<Transaction, Integer> transactionQuantityColumn;
+    public TableColumn<Transaction, String> transactionDateColumn;
+    public TableColumn<Transaction, String> transactionCostColumn;
+
+    public ListView<Warning> warningsListView;
 
     //Lists
     private ObservableList<Inventory> inventoriesList;
     private ObservableList<InventoryContent> inventoriesContentList;
-
     private ObservableList<Drug> drugsList;
-
     private ObservableList<Patient> patientsList;
+    private ObservableList<Transaction> transactionsList;
 
 
     private Pharmacy currentPharmacy;
 
-
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        currentPharmacy = (Pharmacy) currentUser;
-        pharmacyNameLabel.setText(currentPharmacy.getName());
-        pharmacyTelephoneLabel.setText(currentPharmacy.getTelephone());
-
+        initPharmacyData();
         initInventoriesTable();
         initInventoriesContentTable();
         initDrugsInStockTable();
@@ -119,10 +128,17 @@ public class PharmacyPanel extends Application implements Initializable {
         initSellDrugsTable();
         initSearchEngines();
         initQuantitySpinner();
+        initTransactionsTable();
 
     }
 
-    private void initInventoriesTable(){
+    private void initPharmacyData() {
+        currentPharmacy = (Pharmacy) currentUser;
+        pharmacyNameLabel.setText(currentPharmacy.getName());
+        pharmacyTelephoneLabel.setText(currentPharmacy.getTelephone());
+    }
+
+    private void initInventoriesTable() {
         //Set columns value factory
         inventoriesNameColumn.setCellValueFactory(new PropertyValueFactory<Inventory, String>("inventoryName"));
         inventoriesDrugsInStockColumn.setCellValueFactory(new PropertyValueFactory<Inventory, String>("drugsInStock"));
@@ -136,13 +152,14 @@ public class PharmacyPanel extends Application implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 Inventory selectedInventory = inventoriesTableView.getSelectionModel().getSelectedItem();
-                loadInventoryContents(selectedInventory.getInventoryId());
+                if (selectedInventory != null)
+                    loadInventoryContents(selectedInventory.getInventoryId());
             }
         });
 
     }
 
-    private void initInventoriesContentTable(){
+    private void initInventoriesContentTable() {
         //Set columns value factory
         inventoriesDrugNameColumn.setCellValueFactory(new PropertyValueFactory<>("drugName"));
         inventoriesDoseColumn.setCellValueFactory(new PropertyValueFactory<>("dose"));
@@ -157,7 +174,7 @@ public class PharmacyPanel extends Application implements Initializable {
 
     }
 
-    private void initDrugsInStockTable(){
+    private void initDrugsInStockTable() {
         //Set factories
         drugsInventoryColumn.setCellValueFactory(new PropertyValueFactory<>("inventoryName"));
         drugsNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -173,7 +190,7 @@ public class PharmacyPanel extends Application implements Initializable {
         loadDrugsInStock();
     }
 
-    private void initPatientsTable(){
+    private void initPatientsTable() {
         patientsList = FXCollections.observableArrayList();
         patientsFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("first_name"));
         patientsLastNameColumn.setCellValueFactory(new PropertyValueFactory<>("last_name"));
@@ -187,12 +204,12 @@ public class PharmacyPanel extends Application implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 Patient selectedPatient = sellDrugPatientsTableView.getSelectionModel().getSelectedItem();
-                sellSelectedPatientNameLabel.setText(selectedPatient.getFirst_name()+" "+selectedPatient.getLast_name());
+                sellSelectedPatientNameLabel.setText(selectedPatient.getFirst_name() + " " + selectedPatient.getLast_name());
             }
         });
     }
 
-    private void initSellDrugsTable(){
+    private void initSellDrugsTable() {
         sellDrugInventoryColumn.setCellValueFactory(new PropertyValueFactory<>("inventoryName"));
         sellDrugNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         sellDrugDoseColumn.setCellValueFactory(new PropertyValueFactory<>("dose"));
@@ -207,34 +224,51 @@ public class PharmacyPanel extends Application implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 Drug selectedDrug = sellDrugDrugsTableView.getSelectionModel().getSelectedItem();
-                if (selectedDrug!=null){
+                if (selectedDrug != null) {
                     sellSelectedDrugNameLabel.setText(selectedDrug.getName());
-                    costLabel.setText("$"+selectedDrug.getPrice()*quantitySpinner.getValue());
+                    costLabel.setText("$" + selectedDrug.getPrice() * quantitySpinner.getValue());
+                    loadWarnings(selectedDrug.getDrugId());
                 }
             }
         });
     }
 
-    private void initSearchEngines(){
+    private void initSearchEngines() {
         patientSearchField.textProperty().addListener((observableValue, s, t1) -> searchPatientAction());
 
         drugSearchField.textProperty().addListener((observableValue, s, t1) -> searchDrugAction());
     }
 
-    private void initQuantitySpinner(){
+    private void initQuantitySpinner() {
 
-        quantitySpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1,100,1));
+        quantitySpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1));
         quantitySpinner.getEditor().textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 Drug selectedDrug = sellDrugDrugsTableView.getSelectionModel().getSelectedItem();
-                if (selectedDrug!=null){
+                if (selectedDrug != null) {
 
-                    costLabel.setText("$"+selectedDrug.getPrice()*quantitySpinner.getValue());
+                    costLabel.setText("$" + selectedDrug.getPrice() * quantitySpinner.getValue());
                 }
             }
         });
 
+    }
+
+    private void initTransactionsTable() {
+        transactionsList = FXCollections.observableArrayList();
+
+        transactionsFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("buyerFirstName"));
+        transactionLastNameColumn.setCellValueFactory(new PropertyValueFactory<>("buyerLastName"));
+        transactionDrugNameColumn.setCellValueFactory(new PropertyValueFactory<>("drugName"));
+        transactionDoseColumn.setCellValueFactory(new PropertyValueFactory<>("drugDose"));
+        transactionManufacturerColumn.setCellValueFactory(new PropertyValueFactory<>("drugManufacturer"));
+        transactionQuantityColumn.setCellValueFactory(new PropertyValueFactory<>("drugQuantity"));
+        transactionCostColumn.setCellValueFactory(new PropertyValueFactory<>("drugCost"));
+        transactionDateColumn.setCellValueFactory(new PropertyValueFactory<>("transactionDate"));
+
+        transactionsTableView.setItems(transactionsList);
+        loadTransactions();
     }
 
     public void start(Stage stage) throws Exception {
@@ -247,8 +281,8 @@ public class PharmacyPanel extends Application implements Initializable {
 
         //Center to the screen
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize(); //Get screen dimensions
-        stage.setX((dimension.getWidth()-width)/2); //set width and height
-        stage.setY((dimension.getHeight()-height)/2);
+        stage.setX((dimension.getWidth() - width) / 2); //set width and height
+        stage.setY((dimension.getHeight() - height) / 2);
         stage.show();
 
     }
@@ -257,7 +291,7 @@ public class PharmacyPanel extends Application implements Initializable {
     /**
      * Inventories tab tables
      */
-    private void loadInventories(){
+    private void loadInventories() {
         //Clear table
         inventoriesTableView.getItems().clear();
         //Select from database
@@ -268,12 +302,12 @@ public class PharmacyPanel extends Application implements Initializable {
 
         Connection conn = Database.Connector.connect();
         if (conn == null) return;
-        try{
+        try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, currentPharmacy.getPhar_id());
             ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 inventoriesList.add(new Inventory(rs.getInt(1), rs.getInt(2),
                         rs.getString(3), rs.getInt(4)));
             }
@@ -284,7 +318,7 @@ public class PharmacyPanel extends Application implements Initializable {
         inventoriesTableView.setItems(inventoriesList);
     }
 
-    private void loadInventoryContents(int selectedInventoryIndex){
+    private void loadInventoryContents(int selectedInventoryIndex) {
         //Clear table
         inventoriesContentTableView.getItems().clear();
 
@@ -295,16 +329,16 @@ public class PharmacyPanel extends Application implements Initializable {
                 "ON (InventoryContains.drug_id = T.drug_id) WHERE  inv_id = ?";
 
         Connection conn = Database.Connector.connect();
-        if (conn == null){
+        if (conn == null) {
             return;
         }
-        try{
+        try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, selectedInventoryIndex);
 
             ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 inventoriesContentList.add(new InventoryContent(
                         rs.getString(1), rs.getInt(2), rs.getString(3),
                         rs.getDate(4), rs.getInt(5), rs.getDouble(6)
@@ -322,7 +356,7 @@ public class PharmacyPanel extends Application implements Initializable {
     /**
      * Drugs In Stock Tab
      */
-    private void loadDrugsInStock(){
+    private void loadDrugsInStock() {
         drugsTableView.getItems().clear();
         sellDrugDrugsTableView.getItems().clear();
         //Very very complex query :(
@@ -340,15 +374,15 @@ public class PharmacyPanel extends Application implements Initializable {
         Connection conn = Database.Connector.connect();
         if (conn == null) return;
 
-        try{
+        try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setInt(1, currentPharmacy.getPhar_id());
 
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()){
-                drugsList.add(new Drug(rs.getInt(1),rs.getString(2),rs.getInt(3),
-                        rs.getString(4),rs.getInt(5),rs.getInt(6),
-                        rs.getInt(7),rs.getString(8),rs.getInt(9),rs.getDouble(10)));
+            while (rs.next()) {
+                drugsList.add(new Drug(rs.getInt(1), rs.getString(2), rs.getInt(3),
+                        rs.getString(4), rs.getInt(5), rs.getInt(6),
+                        rs.getInt(7), rs.getString(8), rs.getInt(9), rs.getDouble(10)));
 
             }
             conn.close();
@@ -364,20 +398,20 @@ public class PharmacyPanel extends Application implements Initializable {
     /**
      * Sell tab
      */
-    private void loadPatients(){
+    private void loadPatients() {
         sellDrugPatientsTableView.getItems().clear();
         //Simple query
         String sql = "SELECT * FROM Patient";
         Connection conn = Database.Connector.connect();
         if (conn == null) return;
 
-        try{
+        try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 patientsList.add(new Patient(rs.getInt(1), rs.getString(2), rs.getString(3),
-                        rs.getString(4),rs.getString(5).charAt(0), rs.getDate(6)));
+                        rs.getString(4), rs.getString(5).charAt(0), rs.getDate(6)));
             }
 
             conn.close();
@@ -387,15 +421,38 @@ public class PharmacyPanel extends Application implements Initializable {
         sellDrugPatientsTableView.setItems(FXCollections.observableArrayList(patientsList));
     }
 
-    private ObservableList<Patient> searchPatient(String query){
+    private void loadWarnings(int drug_id) {
+        if (warningsListView.getItems() == null) return;
+        warningsListView.getItems().clear();
+        ObservableList<Warning> warningsList = FXCollections.observableArrayList();
+
+        String sql = "SELECT * FROM DrugHasWarning JOIN Warnings ON (Warnings.warning_id = DrugHasWarning.warning_id) WHERE drug_id = ?";
+
+        Connection conn = Database.Connector.connect();
+        if (conn == null) return;
+
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, drug_id);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                warningsList.add(new Warning(rs.getInt(2), rs.getString(4)));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        warningsListView.setItems(warningsList);
+    }
+
+    private ObservableList<Patient> searchPatient(String query) {
         ObservableList<Patient> filteredList = FXCollections.observableArrayList();
         patientsList.stream()
-                .filter(patient -> (patient.getFirst_name()+patient.getLast_name()).toLowerCase().contains(query.replaceAll(" ","").toLowerCase()))
+                .filter(patient -> (patient.getFirst_name() + patient.getLast_name()).toLowerCase().contains(query.replaceAll(" ", "").toLowerCase()))
                 .forEach(filteredList::add);
         return filteredList;
     }
 
-    private ObservableList<Drug> searchDrug(String query){
+    private ObservableList<Drug> searchDrug(String query) {
         ObservableList<Drug> filteredList = FXCollections.observableArrayList();
         drugsList.stream()
                 .filter(drug -> drug.getName().toLowerCase().contains(query.toLowerCase()))
@@ -404,9 +461,45 @@ public class PharmacyPanel extends Application implements Initializable {
     }
 
     /**
+     * Transactions tab
+     */
+
+    private void loadTransactions() {
+        transactionsTableView.getItems().clear();
+
+        String sql = "SELECT patient_id, first_name, last_name, drug_name, dose, name as manufacturer, quantity, date, cost " +
+                "FROM Manufacturer JOIN " +
+                "(SELECT patient_id, first_name, last_name, name as drug_name, dose, man_id, quantity, cost, date " +
+                "FROM Drug JOIN (SELECT patient_id, first_name, last_name, drug_id as Tdrug_id, quantity, cost, date " +
+                "FROM Transaction JOIN " +
+                "Patient ON (Transaction.buyer_id=Patient.patient_id) WHERE seller_id = ?) AS T" +
+                " ON (T.Tdrug_id = Drug.drug_id)) AS K " +
+                "ON (Manufacturer.man_id = K.man_id)";
+
+        Connection conn = Database.Connector.connect();
+
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, currentPharmacy.getPhar_id());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                transactionsList.add(new Transaction(rs.getInt(1),
+                        rs.getString(2), rs.getString(3), rs.getString(4),
+                        rs.getInt(5), rs.getString(6), rs.getInt(7), rs.getDate(8), rs.getDouble(9)
+                ));
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        transactionsTableView.setItems(transactionsList);
+    }
+
+    /**
      * Inventory table toolbar actions
-     * **/
-    public void inventoryAddAction(){
+     **/
+    public void inventoryAddAction() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Add New Inventory");
         dialog.setHeaderText("Add New Inventory");
@@ -419,19 +512,20 @@ public class PharmacyPanel extends Application implements Initializable {
 
         boolean add = Record.addNewInventory(new Inventory(currentPharmacy.getPhar_id(), inventoryNameInput));
 
-        if (!add){
+        if (!add) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Inventory add");
             alert.setHeaderText(null);
             alert.setContentText("Failed to add inventory");
             alert.showAndWait();
         }
+        loadInventories();
 
     }
 
-    public void inventoryDeleteAction(){
+    public void inventoryDeleteAction() {
         Inventory selectedInventory = inventoriesTableView.getSelectionModel().getSelectedItem();
-        if (selectedInventory == null){
+        if (selectedInventory == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Delete Inventory");
             alert.setHeaderText(null);
@@ -443,10 +537,10 @@ public class PharmacyPanel extends Application implements Initializable {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Inventory");
         alert.setHeaderText("Delete Inventory");
-        alert.setContentText("Are you sure that you really want to delete "+ selectedInventory);
+        alert.setContentText("Are you sure that you really want to delete " + selectedInventory);
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
+        if (result.get() == ButtonType.OK) {
             Record.deleteInventory(selectedInventory.getInventoryId());
             loadInventories();
         } else {
@@ -454,7 +548,7 @@ public class PharmacyPanel extends Application implements Initializable {
         }
     }
 
-    public void inventoryEditAction(){
+    public void inventoryEditAction() {
         Inventory selectedInventory = inventoriesTableView.getSelectionModel().getSelectedItem();
         if (selectedInventory == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -471,13 +565,13 @@ public class PharmacyPanel extends Application implements Initializable {
         dialog.setContentText("Inventory name:");
         dialog.getEditor().setText(selectedInventory.getInventoryName());
         Optional<String> result = dialog.showAndWait();
-        if(!result.isPresent()) return;
+        if (!result.isPresent()) return;
         String inventoryNameInput = result.get();
         boolean update = Record.updateInventory(new Inventory(selectedInventory.getInventoryId(),
-                            currentPharmacy.getPhar_id(),
-                            inventoryNameInput));
+                currentPharmacy.getPhar_id(),
+                inventoryNameInput));
 
-        if (!update){
+        if (!update) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Inventory Edit");
             alert.setHeaderText(null);
@@ -488,7 +582,6 @@ public class PharmacyPanel extends Application implements Initializable {
 
         loadInventories();
     }
-
 
     /**
      * Drugs in stock table toolbar actions
@@ -505,9 +598,9 @@ public class PharmacyPanel extends Application implements Initializable {
         loadInventories();
     }
 
-    public void drugsDeleteAction(){
+    public void drugsDeleteAction() {
         Drug selectedDrug = drugsTableView.getSelectionModel().getSelectedItem();
-        if (selectedDrug == null){
+        if (selectedDrug == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Delete Drug");
             alert.setHeaderText(null);
@@ -522,7 +615,7 @@ public class PharmacyPanel extends Application implements Initializable {
         alert.setContentText("Are you sure that you really want to delete " + selectedDrug.getName());
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
+        if (result.get() == ButtonType.OK) {
             //Delete drug
             String sql = "DELETE FROM InventoryContains WHERE inv_id = ? AND drug_id = ?";
             //Connect to the database
@@ -550,27 +643,29 @@ public class PharmacyPanel extends Application implements Initializable {
 
     /**
      * Sell tab actions
-     * **/
+     **/
 
-    public void searchPatientAction(){
+    public void searchPatientAction() {
+        sellDrugPatientsTableView.getItems().clear();
         String query = patientSearchField.getText();
-        if (query.replaceAll(" ","").equals("")){
+        if (query.replaceAll(" ", "").equals("")) {
             sellDrugPatientsTableView.setItems(FXCollections.observableArrayList(patientsList));
-        }else {
+        } else {
             sellDrugPatientsTableView.setItems(searchPatient(query));
         }
     }
 
-    public void searchDrugAction(){
+    public void searchDrugAction() {
+        sellDrugDrugsTableView.getItems().clear();
         String query = drugSearchField.getText();
-        if (query.replaceAll(" ", "").equals("")){
+        if (query.replaceAll(" ", "").equals("")) {
             sellDrugDrugsTableView.setItems(FXCollections.observableArrayList(drugsList));
-        }else {
+        } else {
             sellDrugDrugsTableView.setItems(searchDrug(query));
         }
     }
 
-    public void sellButtonAction(){
+    public void sellButtonAction() {
         int quantity = quantitySpinner.getValue();
 
         Drug selectedDrug = sellDrugDrugsTableView.getSelectionModel().getSelectedItem();
@@ -583,11 +678,11 @@ public class PharmacyPanel extends Application implements Initializable {
             alert.setContentText("Please select a drug and patient to make a transaction");
             alert.showAndWait();
             return;
-        }else if (quantity>selectedDrug.getQuantity()){
+        } else if (quantity > selectedDrug.getQuantity()) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Make Transaction");
             alert.setHeaderText(null);
-            alert.setContentText("There is not enough "+selectedDrug.getName()+" in the stock to make transaction.");
+            alert.setContentText("There is not enough " + selectedDrug.getName() + " in the stock to make transaction.");
             alert.showAndWait();
             return;
         }
@@ -595,13 +690,13 @@ public class PharmacyPanel extends Application implements Initializable {
         if (currentPharmacy.makeTransaction(selectedDrug.getInventoryId(),
                 selectedPatient.getPatient_id(),
                 selectedDrug.getDrugId(),
-                quantity)){
+                quantity, quantity * selectedDrug.getPrice())) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Make Transaction");
             alert.setHeaderText(null);
             alert.setContentText("Transaction recorded successfully.");
             alert.showAndWait();
-        }else {
+        } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Make Transaction");
             alert.setHeaderText(null);
@@ -611,7 +706,49 @@ public class PharmacyPanel extends Application implements Initializable {
 
         loadDrugsInStock();
         loadInventories();
+        loadTransactions();
     }
 
-}
+    public void transactionDeleteAction() {
+        Transaction selectedTransaction = transactionsTableView.getSelectionModel().getSelectedItem();
 
+        if (selectedTransaction == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Please select a transaction to delete");
+            alert.showAndWait();
+            return;
+        }
+
+        boolean delete = Record.deleteTransaction(selectedTransaction.getBuyer_id(),
+                currentPharmacy.getPhar_id(),
+                selectedTransaction.getDate());
+
+        if (!delete) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Couldn't delete data");
+            alert.showAndWait();
+        }
+        loadTransactions();
+    }
+
+    public void editPharmacyAction() throws IOException {
+        Pane myPane = FXMLLoader.load(getClass().getResource("/Layout/editPharmacyDialog.fxml"));
+        Scene scene = new Scene(myPane);
+        Stage stage = new Stage();
+        stage.setResizable(false);
+        stage.setScene(scene);
+        stage.showAndWait();
+        initPharmacyData();
+
+    }
+
+    public void addPatientAction() throws IOException {
+        Pane myPane = FXMLLoader.load(getClass().getResource("/Layout/addPatientDialog.fxml"));
+        Scene scene = new Scene(myPane);
+        Stage stage = new Stage();
+        stage.setResizable(false);
+        stage.setScene(scene);
+        stage.showAndWait();
+        loadPatients();
+    }
+}

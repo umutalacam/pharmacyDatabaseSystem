@@ -21,7 +21,7 @@ public class InventoryContent {
         this.drugName = new SimpleStringProperty(drugName);
         this.dose = new SimpleIntegerProperty(dose);
         this.manufacturerName = new SimpleStringProperty(manufacturerName);
-        DateFormat dateFormat = new SimpleDateFormat("dd-mm-yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         this.expiryDate = new SimpleStringProperty(dateFormat.format(expiryDate));
         this.quantity = new SimpleIntegerProperty(quantity);
         this.price = new SimpleDoubleProperty(price);
